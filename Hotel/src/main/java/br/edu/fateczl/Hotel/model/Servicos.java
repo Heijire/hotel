@@ -22,18 +22,18 @@ import lombok.ToString;
 @Entity
 @Table(name = "servicos")
 public class Servicos {
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id", nullable = false)
 	private int id;
-	
+
 	@Column(name = "nome", length = 80, nullable = false)
 	private String nome;
-	
+
 	@Column(name = "descricao", length = 255, nullable = false)
 	private String descricao;
-	
+
 	@Column(name = "valor", precision = 7, scale = 2, nullable = false)
 	private BigDecimal valor;
 

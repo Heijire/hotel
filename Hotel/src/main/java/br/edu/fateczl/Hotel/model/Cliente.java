@@ -18,17 +18,17 @@ import lombok.ToString;
 @Entity
 @Table(name = "cliente")
 public class Cliente {
-	
+
 	@Id
 	@Column(name = "cpf", nullable = false)
 	private int cpf;
-	
+
 	@Column(name = "nome", length = 90, nullable = false)
 	private String nome;
-	
+
 	@Column(name = "telefone", nullable = false)
 	private int telefone;
-	
+
 	@Column(name = "cidade", length = 90, nullable = false)
 	private String cidade;
 

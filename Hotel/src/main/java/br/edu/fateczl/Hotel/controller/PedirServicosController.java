@@ -23,74 +23,74 @@ import br.edu.fateczl.Hotel.service.ServicosConsumidosService;
 @Controller
 public class PedirServicosController {
 
-	@Autowired
-	private ServicosConsumidosService servicosConsumidosService;
+    @Autowired
+    private ServicosConsumidosService servicosConsumidosService;
 
-	@Autowired
-	private ServicoService servicoService;
+    @Autowired
+    private ServicoService servicoService;
 
-	@Autowired
-	private HospedagemService hospedagemService;
+    @Autowired
+    private HospedagemService hospedagemService;
 
-	@RequestMapping(name = "pedir_servicos", value = "/pedir_servicos", method = RequestMethod.GET)
-	public ModelAndView pedirServicosGet(@RequestParam Map<String, String> params, ModelMap model) {
-		String erro = "";
-		String saida = "";
+    @RequestMapping(name = "pedir_servicos", value = "/pedir_servicos", method = RequestMethod.GET)
+    public ModelAndView pedirServicosGet(@RequestParam Map<String, String> params, ModelMap model) {
+        String erro = "";
+        String saida = "";
 
-		List<ServicosConsumidos> listaServicosConsumidos = new ArrayList<>();
+        List<ServicosConsumidos> listaServicosConsumidos = new ArrayList<>();
 
-		try {
-			listaServicosConsumidos = servicosConsumidosService.listar();
-		} catch (Exception e) {
-			erro = e.getMessage();
-		}
+        try {
+            listaServicosConsumidos = servicosConsumidosService.listar();
+        } catch (Exception e) {
+            erro = e.getMessage();
+        }
 
-		model.addAttribute("servicoss", servicoService.listar());
-		model.addAttribute("hospedagens", hospedagemService.listar());
-		model.addAttribute("consumidos", listaServicosConsumidos);
-		model.addAttribute("erro", erro);
-		model.addAttribute("saida", saida);
+        model.addAttribute("servico", servicoService.listar());
+        model.addAttribute("hospedagem", hospedagemService.listar());
+        model.addAttribute("servicosconsumidoss", listaServicosConsumidos);
 
-		return new ModelAndView("pedir_servicos");
-	}
+        model.addAttribute("erro", erro);
+        model.addAttribute("saida", saida);
 
-	@RequestMapping(name = "pedir_servicos", value = "/pedir_servicos", method = RequestMethod.POST)
-	public ModelAndView pedirServicosPost(@RequestParam Map<String, String> params, ModelMap model) {
-		String erro = "";
-		String saida = "";
-		String botao = params.get("botao");
-		
-		try {
-			if (botao.equalsIgnoreCase("Adicionar")) {
-				int servicoId = Integer.parseInt(params.get("servico_id"));
-		        int hospedagemId = Integer.parseInt(params.get("hospedagem_id"));
-		        LocalDate dtUsada = LocalDate.parse(params.get("dt_usada"));
+        return new ModelAndView("pedir_servicos");
+    }
 
-				Servicos servicos = servicoService.buscarPorId(servicoId).orElse(null);
-				Hospedagem hospedagem = hospedagemService.buscarPorId(hospedagemId).orElse(null);
+    @RequestMapping(name = "pedir_servicos", value = "/pedir_servicos", method = RequestMethod.POST)
+    public ModelAndView pedirServicosPost(@RequestParam Map<String, String> params, ModelMap model) {
+        String erro = "";
+        String saida = "";
+        String botao = params.get("botao");
 
-				if (servicos != null && hospedagem != null && dtUsada != null) {
-					ServicosConsumidos sc = new ServicosConsumidos();
-					sc.setServicos(servicos);
-					sc.setHospedagem(hospedagem);
-					sc.setDtUsada(dtUsada);
+        try {
+            if (botao.equalsIgnoreCase("Adicionar")) {
+                int servicoId = Integer.parseInt(params.get("servico"));
+                int hospedagemId = Integer.parseInt(params.get("hospedagem"));
+                LocalDate dtUsada = LocalDate.parse(params.get("dtUsada"));
 
-					servicosConsumidosService.salvar(sc);
-					saida = "Serviço consumido registrado com sucesso.";
-				} else {
-					erro = "Dados incompletos para registrar o serviço.";
-				}
-			}
-		} catch (Exception e) {
-			erro = e.getMessage();
-		}
+                Servicos servicos = servicoService.buscarPorId(servicoId).orElse(null);
+                Hospedagem hospedagem = hospedagemService.buscarPorId(hospedagemId).orElse(null);
 
-		model.addAttribute("servicoss", servicoService.listar());
-		model.addAttribute("hospedagens", hospedagemService.listar());
-		model.addAttribute("consumidos", servicosConsumidosService.listar());
-		model.addAttribute("erro", erro);
-		model.addAttribute("saida", saida);
+                if (servicos != null && hospedagem != null && dtUsada != null) {
+                    ServicosConsumidos sc = new ServicosConsumidos();
+                    sc.setServicos(servicos);
+                    sc.setHospedagem(hospedagem);
+                    sc.setDtUsada(dtUsada);
 
-		return new ModelAndView("pedir_servicos");
-	}
+                    servicosConsumidosService.salvar(sc);
+                    saida = "Serviço consumido registrado com sucesso.";
+                } else {
+                    erro = "Dados incompletos para registrar o serviço.";
+                }
+            }
+        } catch (Exception e) {
+            erro = e.getMessage();
+        }
+        model.addAttribute("servico", servicoService.listar());
+        model.addAttribute("hospedagem", hospedagemService.listar());
+        model.addAttribute("servicosconsumidoss", servicosConsumidosService.listar());
+        model.addAttribute("erro", erro);
+        model.addAttribute("saida", saida);
+
+        return new ModelAndView("pedir_servicos");
+    }
 }

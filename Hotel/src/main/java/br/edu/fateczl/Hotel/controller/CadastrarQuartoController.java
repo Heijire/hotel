@@ -85,9 +85,11 @@ public class CadastrarQuartoController {
 				tipoId = Integer.parseInt(params.get("tipo"));
 			}
 
-			if (comando.equalsIgnoreCase("Listar")) {
+			if (comando.equalsIgnoreCase("Buscar")) {
 				quartos = quartoService.listar();
-			} else if (comando.equalsIgnoreCase("adicionar")) {
+			}
+
+			if (comando.equalsIgnoreCase("adicionar")) {
 				Tipo tipo = tipoService.buscarPorId(tipoId).orElse(null);
 				quarto.setNumero(numero);
 				quarto.setAndar(andar);
@@ -101,7 +103,7 @@ public class CadastrarQuartoController {
 					saida = "Quarto " + numero + " cadastrado com sucesso";
 				}
 
-			} 
+			}
 
 			if (comando.equalsIgnoreCase("Remover")) {
 				if (numero != null) {

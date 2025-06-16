@@ -13,7 +13,7 @@ import br.edu.fateczl.Hotel.repository.TipoRepository;
 public class TipoService {
 	@Autowired
 	private TipoRepository tipoRepository;
-	
+
 	public List<Tipo> listar(){
 		return tipoRepository.findAll();
 	}
@@ -21,6 +21,11 @@ public class TipoService {
 		return tipoRepository.findById(id);
 	}
 	
+	public Tipo buscarPorNome(String nome) {
+		return tipoRepository.findByNome(nome);
+	}
+	
+
 	public Tipo salvar(Tipo tipo) {
 		return tipoRepository.save(tipo);
 	}

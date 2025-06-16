@@ -31,8 +31,8 @@ public class CadastrarServicoController {
 		Servicos servicos = new Servicos();
 
 		try {
-			if (params.get("codigo") != null && !params.get("codigo").isEmpty()) {
-				codigo = Integer.parseInt(params.get("codigo"));
+			if (params.get("id") != null && !params.get("id").isEmpty()) {
+				codigo = Integer.parseInt(params.get("id"));
 
 				if (acao.equalsIgnoreCase("editar")) {
 					servicos = servicoService.buscarPorId(codigo).orElse(null);
@@ -74,7 +74,7 @@ public class CadastrarServicoController {
 				valor = new BigDecimal(params.get("valor").replace(",", "."));
 			}
 
-			if (comando.equalsIgnoreCase("Listar")) {
+			if (comando.equalsIgnoreCase("buscar")) {
 				servicoss = servicoService.listar();
 
 			} else if (comando.equalsIgnoreCase("Adicionar")) {

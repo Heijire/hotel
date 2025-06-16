@@ -22,23 +22,23 @@ public class CadastrarClienteController {
 
 	@RequestMapping(name = "cadastrar_cliente", value = "/cadastrar_cliente", method = RequestMethod.GET)
 	public ModelAndView CadastrarClienteGet(@RequestParam Map<String, String> params, ModelMap model) {
-		Integer cpf = null;
+		Integer id = null;
 		String acao = params.get("acao");
 		String saida = "";
 		String erro = "";
 		Cliente cliente = new Cliente();
 
-		if (params.get("cpf") != null && !params.get("cpf").isEmpty()) {
-			cpf = Integer.parseInt(params.get("cpf"));
+		if (params.get("id") != null && !params.get("id").isEmpty()) {
+			id = Integer.parseInt(params.get("id"));
 		}
 
 		try {
-			if (cpf != null) {
-				if ("editar".equalsIgnoreCase(acao)) {
-					cliente = clienteService.buscarPorId(cpf).orElse(null);
-				} else if ("excluir".equalsIgnoreCase(acao)) {
-					cliente = clienteService.buscarPorId(cpf).orElse(null);
-					clienteService.deletar(cpf);
+			if (id != null) {
+				if (acao.equalsIgnoreCase("editar")) {
+					cliente = clienteService.buscarPorId(id);
+				} else if (acao.equalsIgnoreCase("excluir")) {
+					cliente = clienteService.buscarPorId(id);
+					clienteService.deletar(id);
 					saida = "Cliente: " + cliente.getNome() + " deletado com sucesso";
 					cliente = null;
 				}
@@ -70,8 +70,11 @@ public class CadastrarClienteController {
 		}
 
 		try {
-			if (comando.equalsIgnoreCase("Listar")) {
+			if (comando.equalsIgnoreCase("BUSCAR")) {
 				clientes = clienteService.listar();
+				for(Cliente c: clientes) {
+					System.err.println(c.toString());
+				}
 			}
 
 			if (comando.equalsIgnoreCase("Adicionar")) {
@@ -81,7 +84,7 @@ public class CadastrarClienteController {
 				cliente.setCidade(cidade);
 				clienteService.salvar(cliente);
 
-				if (clienteService.buscarPorId(cpf).isPresent()) {
+				if (clienteService.buscarPorId(cpf) != null) {
 					saida = "Cliente (" + cliente.getNome() + ") atualizado com sucesso";
 				} else {
 					saida = "Cliente adicionado com sucesso";

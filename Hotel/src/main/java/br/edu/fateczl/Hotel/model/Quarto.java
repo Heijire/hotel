@@ -21,17 +21,17 @@ import lombok.ToString;
 @Entity
 @Table(name = "quarto")
 public class Quarto {
-	
+
 	@Id
 	@Column(name = "numero", nullable = false)
 	private int numero;
-	
+
 	@Column(name = "andar", nullable = false)
 	private int andar;
-	
+
 	@Column(name = "descricao", length =255, nullable = false)
 	private String descricao;
-	
+
 	@ManyToOne(targetEntity = Tipo.class, fetch = FetchType.LAZY)
 	@JoinColumn(name = "tipo_id", nullable = false)
 	private Tipo tipo;

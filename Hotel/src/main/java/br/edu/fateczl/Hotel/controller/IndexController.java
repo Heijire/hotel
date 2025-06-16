@@ -1,6 +1,7 @@
 package br.edu.fateczl.Hotel.controller;
 
 import java.util.Map;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,5 +16,5 @@ public class IndexController {
 	public ModelAndView indexGet(@RequestParam Map<String, String> params, ModelMap model) {
 		return new ModelAndView("index");
 	}
-	
+
 }

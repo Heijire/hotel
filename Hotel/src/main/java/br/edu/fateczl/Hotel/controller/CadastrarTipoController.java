@@ -72,22 +72,29 @@ public class CadastrarTipoController {
 			if (params.get("valor") != null && !params.get("valor").isEmpty()) {
 				valor = new BigDecimal(params.get("valor").replace(",", "."));
 			}
-			if (comando.equalsIgnoreCase("Listar")) {
-				tipos = tipoService.listar();
 
-			} else if (comando.equalsIgnoreCase("Adicionar")) {
+			if (comando.equalsIgnoreCase("Buscar")) {
+				tipos = tipoService.listar();
+			} else if(comando.equalsIgnoreCase("PesquisarCategoria")) {
+				tipo = tipoService.buscarPorNome(nome);
+			}
+
+			if (comando.equalsIgnoreCase("Adicionar")) {
 				tipo.setId(id);
 				tipo.setNome(nome);
 				tipo.setValor(valor);
 
 				tipoService.salvar(tipo);
 
-				if (tipoService.buscarPorId(id).isPresent()) {
+				if (tipoService.buscarPorId(id) != null) {
 					saida = "Tipo (" + tipo.getNome() + ") atualizado com sucesso";
 				} else {
 					saida = "Tipo adicionado com sucesso";
 				}
-			} else if (comando.equalsIgnoreCase("Remover")) {
+
+			}
+
+			if (comando.equalsIgnoreCase("Remover")) {
 				if (id != null) {
 					tipoService.deletar(id);
 					saida = "Tipo removido com sucesso";

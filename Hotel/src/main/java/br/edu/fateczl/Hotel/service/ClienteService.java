@@ -16,16 +16,16 @@ public class ClienteService {
 	public List<Cliente> listar(){
 		return clienteRepository.findAll();
 	}
-	
-	public Optional<Cliente> buscarPorId(int cpf) {
-		return clienteRepository.findById(cpf);
+
+	public Cliente buscarPorId(int cpf) {
+		return clienteRepository.findByCpf(cpf);
 	}
-	
+
 	public Cliente salvar(Cliente cliente) {
 		return clienteRepository.save(cliente);
 	}
-	
+
 	public void deletar(int cpf) {
-	 clienteRepository.deleteById(cpf);	
+	 clienteRepository.deleteById(cpf);
 	}
 }

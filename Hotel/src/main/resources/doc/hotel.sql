@@ -155,7 +155,7 @@ as
 begin
 	select c.nome as NomeCliente, c.cpf as CPF, c.telefone as telefone, c.cidade as Cidade,
 	q.numero as NumeroQuarto, t.nome as TipoQuarto, 
-	h.dt_entrada as DataEntrada, DATEADD(day, h.qnt_dias-1, h.dt_entrada),
+	h.dt_entrada as DataEntrada, DATEADD(day, h.qnt_dias-1, h.dt_entrada) as Saida,
 	t.preco as Diaria, h.qnt_dias * preco as SomaDiarias,
 	dbo.fn_total_hospedagem(h.id) as ValorTotal
 
@@ -166,7 +166,7 @@ begin
 	on q.numero = h.quarto_numero
 	join tipo t
 	on t.id = q.tipo_id
-	where h.id = @idhospedagem
+	where h.id = @idhospedagem -- 1
 
 	select u.dt_usada as Data,
 		s.nome as Servico,
@@ -175,17 +175,17 @@ begin
 	from servicos_consumidos u
 	join servicos s
 	on s.id = u.servico_id
-	where u.hospedagem_id = @idhospedagem
+	where u.hospedagem_id = @idhospedagem --1
 	order by u.dt_usada asc
 end 
 go
 create procedure sp_relatorios(@data date)
 as 
 begin
-	select r.id, c.nome as NomeCliente, c.cpf as CPF, c.telefone as Telefone, c.cidade as Cidade, 
-		q.numero as NumeroQuarto, q.andar as Andar, q.descricao as Descricao, t.nome as Tipo, t.preco as Diaria,
-		r.qnt_dias as QuantidadeDias, r.dt_entrada as Data_Inicial, DATEADD(day, r.qnt_dias - 1, r.dt_entrada) as Data_Final, 
-		(r.qnt_dias * t.preco) as Valor_Diarias
+	select r.id, c.nome , c.cpf, c.telefone , c.cidade , 
+		q.numero , q.andar, q.descricao , t.nome as tipo_quarto , t.preco,
+		r.qnt_dias , r.dt_entrada, DATEADD(day, r.qnt_dias - 1, r.dt_entrada)  AS data_final, 
+		(r.qnt_dias * t.preco) AS valor_diarias
 
 	from reserva r
 	join cliente c
@@ -197,3 +197,59 @@ begin
 	order by c.nome
 end 
 go
+
+-- CLIENTES
+INSERT INTO cliente (cpf, nome, telefone, cidade) VALUES
+(11111, 'Maria Silva', 990010001, 'Recife'),
+(22222, 'João Souza', 990010002, 'Olinda'),
+(33333, 'Ana Costa', 990010003, 'Paulista');
+
+-- TIPOS DE QUARTO
+INSERT INTO tipo (id, nome, preco) VALUES
+(1, 'Standard', 150.00),
+(2, 'Luxo', 300.00),
+(3, 'Executivo', 450.00);
+
+-- QUARTOS
+INSERT INTO quarto (tipo_id, numero, andar, descricao) VALUES
+(1, 101, 1, 'Quarto com cama de casal e ventilador'),
+(2, 202, 2, 'Quarto com ar-condicionado e TV LED'),
+(3, 303, 3, 'Suíte com vista para o mar, banheira e Wi-Fi');
+
+-- SERVIÇOS
+INSERT INTO servicos (id, nome, descricao, valor) VALUES
+(1, 'Café da manhã', 'Serviço de café da manhã incluso', 25.00),
+(2, 'Lavanderia', 'Serviço de lavanderia para roupas pessoais', 35.00),
+(3, 'SPA', 'Acesso ao SPA e massagem relaxante', 100.00);
+
+-- RESERVAS (data usada para testar relatórios)
+INSERT INTO reserva (id, cliente_cpf, quarto_numero, qnt_dias, dt_entrada) VALUES
+(1, 11111, 101, 2, '2025-06-15'),
+(2, 22222, 202, 3, '2025-06-15'),
+(3, 33333, 303, 1, '2025-06-16');
+
+-- HOSPEDAGENS
+INSERT INTO hospedagem (id, cliente_cpf, quarto_numero, dt_entrada, qnt_dias) VALUES
+(1, 11111, 101, '2025-06-10', 3),
+(2, 22222, 202, '2025-06-14', 4);
+
+-- SERVIÇOS CONSUMIDOS
+INSERT INTO servicos_consumidos (id, hospedagem_id, servico_id, dt_usada) VALUES
+(1, 1, 1, '2025-06-10'),
+(2, 1, 2, '2025-06-11'),
+(3, 2, 1, '2025-06-14'),
+(4, 2, 3, '2025-06-15');
+
+go
+SELECT 
+    c.cpf,    c.nome AS cliente_nome,
+    h.dt_entrada, h.qnt_dias, DATEADD(day, h.qnt_dias - 1, h.dt_entrada) as saida,
+    q.numero,t.nome AS tipo_quarto, t.preco,
+    s.nome AS servico_nome,   s.valor AS servico_valor,    sc.dt_usada
+FROM hospedagem h
+JOIN cliente c ON h.cliente_cpf = c.cpf
+JOIN quarto q ON h.quarto_numero = q.numero
+JOIN tipo t ON q.tipo_id = t.id
+LEFT JOIN servicos_consumidos sc ON h.id = sc.hospedagem_id
+LEFT JOIN servicos s ON sc.servico_id = s.id
+WHERE h.id = 1
